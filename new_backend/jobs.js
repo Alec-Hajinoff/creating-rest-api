@@ -1,6 +1,8 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
+
 const router = express.Router();
+
 //A list of all jobs that exist along with their submission & completion dates.
 let ALL_JOBS = [
   {
@@ -10,10 +12,14 @@ let ALL_JOBS = [
     completion_date: null,
   }
 ];
+
+
 //Feature 1: Getting a list of jobs
 router.get("/", (req, res) => {
   res.json(ALL_JOBS);
 });
+
+
 //Feature 2: Getting a specific job
 router.get("/:id", (req, res) => {
   const { id } = req.params;
@@ -26,25 +32,33 @@ router.get("/:id", (req, res) => {
   }
   res.json(job);
 });
+
+
 //Feature 3: Adding a new job:
 router.post("/", (req, res) => {
   const { body } = req;
   const { description } = body; //However the completion date isn't known at this point, how do we account for this?
+  
+  console.log(description);
+  
 //Generate a unique ID for the new job.
   const newId = uuidv4();
   const newJob = {
     id: newId,
-    description: description,
+    description,
     submission_date: new Date(),
   };
 //Add the new job to the list of jobs.
   ALL_JOBS.push(newJob);
   res.json(newJob);
 });
+
+
+
 //Feature 4: Deleting a job.
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
-  const newListOFJobs = ALL_JOBS.filter(
+  const newListOfJobs = ALL_JOBS.filter(
     (job) => job.id !== id
   );
   // The user tried to delete a job that doesn't exist.
@@ -55,6 +69,8 @@ router.delete("/:id", (req, res) => {
   ALL_JOBS = newListOfJobs;
   res.sendStatus(200);
 });
+
+
 //Feature 5: Updating the description of a job.
 router.put("/:id", (req, res) => {
   const { id } = req.params;
@@ -72,5 +88,6 @@ router.put("/:id", (req, res) => {
   }
   res.sendStatus(200);
 });
+
 module.exports = router;
 
